@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -12,11 +13,11 @@ import (
 func (h *Handler) RegisterAccount(c echo.Context) error {
 	req := &createAccountRequest{}
 	if err := req.bind(c); err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err})
+		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err.Error()})
 	}
 	ac, err := h.accountStore.CreateAccount(req.Name)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err})
+		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err.Error()})
 	}
 	return c.JSON(http.StatusOK, utils.StandardResponse{Success: true, Data: ac})
 }
@@ -25,11 +26,12 @@ func (h *Handler) RegisterAccount(c echo.Context) error {
 func (h *Handler) ViewAccountSummary(c echo.Context) error {
 	accountID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err})
+		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err.Error()})
 	}
 	ac, err := h.accountStore.GetAccountDetails(accountID)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err})
+		log.Println(err)
+		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err.Error()})
 	}
 	return c.JSON(http.StatusOK, utils.StandardResponse{Success: true, Data: ac})
 }

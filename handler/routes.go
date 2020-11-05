@@ -6,7 +6,7 @@ import (
 
 func (h *Handler) Register(v1 *echo.Group) {
 	accountGroup := v1.Group("/account")
-	accountGroup.POST("/", h.RegisterAccount)
+	accountGroup.POST("", h.RegisterAccount)
 	accountGroup.GET("/:id", h.ViewAccountSummary)
 	accountGroup.GET("/list", h.ListAccount)
 	accountGroup.GET("/mutation", h.ViewMutation)

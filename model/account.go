@@ -6,7 +6,7 @@ import (
 
 type Account struct {
 	gorm.Model
-	AccountName string
+	AccountName string `gorm:"unique"`
 	TotalCredit int
 	TotalDebit  int
 }
