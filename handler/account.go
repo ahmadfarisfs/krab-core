@@ -1,16 +1,37 @@
 package handler
 
-import "github.com/labstack/echo/v4"
+import (
+	"net/http"
+	"strconv"
+
+	"github.com/ahmadfarisfs/krab-core/utils"
+	"github.com/labstack/echo/v4"
+)
 
 //RegisterAccount freate new accounts
 func (h *Handler) RegisterAccount(c echo.Context) error {
-
-	return nil
+	req := &createAccountRequest{}
+	if err := req.bind(c); err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err})
+	}
+	ac, err := h.accountStore.CreateAccount(req.Name)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err})
+	}
+	return c.JSON(http.StatusOK, utils.StandardResponse{Success: true, Data: ac})
 }
 
 //ViewAccountSummary view current summary of an account
 func (h *Handler) ViewAccountSummary(c echo.Context) error {
-	return nil
+	accountID, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusUnprocessableEntity, utils.StandardResponse{Success: false, ErrorMessage: err})
+	}
+	ac, err := h.accountStore.GetAccountDetails(accountID)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, utils.StandardResponse{Success: false, ErrorMessage: err})
+	}
+	return c.JSON(http.StatusOK, utils.StandardResponse{Success: true, Data: ac})
 }
 
 //ViewMutation list mutation between dates with filter (list of account id) also with paging

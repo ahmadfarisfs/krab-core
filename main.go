@@ -34,10 +34,10 @@ func main() {
 
 	d := db.New()
 	db.AutoMigrate(d)
-	as := store.AccountStore(d)
-	ts := store.TransactionStore(d)
+	as := store.NewAccountStore(d)
+	ts := store.NewTransactionStore(d)
 
-	handler.NewHandler(ts, as)
-	//h.Register(v1)
+	h := handler.NewHandler(as, ts)
+	h.Register(v1)
 	r.Logger.Fatal(r.Start("127.0.0.1:8585"))
 }
